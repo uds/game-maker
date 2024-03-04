@@ -1,0 +1,18 @@
+/* 
+  TailwindCSS sources.
+
+  This file is compiled by tilwindcss tool into resources/public/css/compiled/front-styles.css
+*/
+
+/* Build all CSS files through TailwindCSS tools so they can all be packaged and minified together into the single output CSS file */
+@import "../../../resources/public/css/common-styles.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* disable default focus outline for buttons and links */
+button,a:focus {
+  outline: none;
+}

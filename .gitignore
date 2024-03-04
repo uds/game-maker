@@ -1,0 +1,10 @@
+/.calva
+/.clj-kondo
+/.lsp
+/.shadow-cljs
+/target
+/node_modules
+/*.log
+
+/resources/public/js/compiled
+/resources/public/css/compiled

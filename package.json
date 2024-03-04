@@ -1,0 +1,37 @@
+{
+  "name": "game-maker",
+  "version": "1.0.0",
+  "main": "game-maker.js",
+  "keywords": [
+    "game",
+    "LLM",
+    "Babylon.js"
+  ],
+  "author": "uds",
+  "license": "MIT",
+  "scripts": {
+    "watch": "npx shadow-cljs watch app-front app-server",
+    "release": "npx shadow-cljs release app-front app-server",
+    "tailwindcss-watch": "npx tailwindcss -i src/game_maker/front/styles.css -o resources/public/css/compiled/front-styles.css --watch",
+    "tailwindcss-dev": "npx tailwindcss -i src/game_maker/front/styles.css -o resources/public/css/compiled/front-styles.css",
+    "tailwindcss-prod": "npx tailwindcss -i src/game_maker/front/styles.css -o resources/public/css/compiled/front-styles.css --minify",
+    "release-all": "npm run release && npm run tailwindcss-prod",
+    "build-report-front": "npx shadow-cljs run shadow.cljs.build-report app-front target/build-report-front.html",
+    "build-report-server": "npx shadow-cljs run shadow.cljs.build-report app-server target/build-report-server.html"
+  },
+  "dependencies": {
+    "babylonjs": "6.45.1",
+    "htmx.org": "1.9.10",
+    "cookies": "0.9.1",
+    "random-bytes": "1.0.0",
+    "simple-encryptor": "4.0.0",
+    "etag": "1.8.1",
+    "multiparty": "4.2.3",
+    "concat-stream": "2.0.0"
+  },
+  "devDependencies": {
+    "shadow-cljs": "^2.27.5",
+    "source-map-support": "0.5.21",
+    "tailwindcss": "3.4.1"
+  }
+}
