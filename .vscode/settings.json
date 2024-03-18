@@ -1,0 +1,7 @@
+{
+    "breadcrumbs.enabled": false,
+    "notebook.breadcrumbs.showCodeCells": true,
+    "workbench.tree.enableStickyScroll": false,
+    "editor.stickyScroll.scrollWithEditor": false,
+    "editor.stickyScroll.enabled": false
+}

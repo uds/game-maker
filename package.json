@@ -10,18 +10,21 @@
   "author": "uds",
   "license": "MIT",
   "scripts": {
+    "server": "node target/game-maker.js",
     "watch": "npx shadow-cljs watch app-front app-server",
     "release": "npx shadow-cljs release app-front app-server",
     "tailwindcss-watch": "npx tailwindcss -i src/game_maker/front/styles.css -o resources/public/css/compiled/front-styles.css --watch",
     "tailwindcss-dev": "npx tailwindcss -i src/game_maker/front/styles.css -o resources/public/css/compiled/front-styles.css",
     "tailwindcss-prod": "npx tailwindcss -i src/game_maker/front/styles.css -o resources/public/css/compiled/front-styles.css --minify",
     "release-all": "npm run release && npm run tailwindcss-prod",
-    "build-report-front": "npx shadow-cljs run shadow.cljs.build-report app-front target/build-report-front.html",
-    "build-report-server": "npx shadow-cljs run shadow.cljs.build-report app-server target/build-report-server.html"
+    "build-report": "npx shadow-cljs run shadow.cljs.build-report app-front target/build-report-front.html"
   },
   "dependencies": {
-    "babylonjs": "6.45.1",
-    "htmx.org": "1.9.10",
+    "openai": "4.29.1",
+    "babylonjs": "6.47.0",
+    "htmx.org": "1.9.11",
+    "@tailwindcss/aspect-ratio": "0.4.2",
+    "@tailwindcss/forms": "0.5.7",
     "cookies": "0.9.1",
     "random-bytes": "1.0.0",
     "simple-encryptor": "4.0.0",

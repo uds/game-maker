@@ -10,12 +10,14 @@ To set up the project, follow the steps below:
 2. Install Node.js if you haven't already.
 3. Open a terminal and navigate to the project directory.
 4. Run the following command to install the project dependencies:
-   ```
+   ``` 
    npm install
+   ```
 
 ## Development
 
-### Compilation of CSS resources 
+### Compilation of CSS resources
+ 
 TailwindCSS styles can be recompiled manually by running following command:  
 `npm run tailwindcss-dev` or `npm run tailwindcss-prod`
 Note that appropriate `tailwindcss-...` task is NOT run automatically by shadow-cljs (e.g. by Calva jack-in). 
@@ -25,3 +27,21 @@ To ran TailwindCSS compiler in a watch mode while developing:
 `npm run tailwindcss-watch`  
 or  
 `npx tailwindcss -i src/app/phs/front/styles.css -o resources/public/css/compiled/front-styles.css --watch`
+
+
+### Calva Jack-in
+
+To start the Clojure REPL and connect to it using Calva, follow these steps:
+
+1. Open Visual Studio Code.
+2. Open the project directory in Visual Studio Code.
+3. Install the Calva extension if you haven't already.
+4. Press `Ctrl+Alt+C` or go to the Command Palette (`Ctrl+Shift+P`).
+5. Search for "Calva: Jack-in" and select the appropriate option for your project setup.
+6. Calva will start the Clojure REPL and connect to it.
+
+### Start node server
+
+``` 
+npm run server
+```

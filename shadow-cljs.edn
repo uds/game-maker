@@ -12,8 +12,8 @@
  :builds {:app-front  {:target     :browser
                        :output-dir "resources/public/js/compiled"
                        :asset-path "/js/compiled"
-                       :modules    {:app-front {:init-fn game-maker.front.core/init}}
-                       :dev        {:modules {:app-front {:init-fn  game-maker.front.core/init}}}}
+                       :modules    {:app-front {:init-fn game-maker.front.core/-main}}
+                       :dev        {:modules {:app-front {:init-fn  game-maker.front.core/-main}}}}
 
           :app-server {:target           :node-script
                        :main             game-maker.core/start
