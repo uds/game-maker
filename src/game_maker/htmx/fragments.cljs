@@ -33,7 +33,7 @@
 
       [:form {:class "flex-1 flex flex-col gap-4 m-0 "}
        ;; LLM response panel
-       [:div#query-result {:class "flex-1 p-2 max-h-96 overflow-auto border rounded-md border-neutral-300"}
+       [:div#query-result {:class "flex-1 p-2 max-h-80 overflow-auto border rounded-md border-neutral-300"}
         (if-let [chat-history @gpt/!chat-history]
           [:p {:class "whitespace-pre text-indigo-400"} chat-history]
           [:span {:class "italic text-neutral-400"} "Results will be shown here..."])]
@@ -57,7 +57,7 @@
        ;; prompt text
        (w/textarea {:label "Prompt"
                     :name  "gpt-prompt"
-                    :rows  5})
+                    :rows  3})
 
        [:dive {:class "flex justify-end gap-4"}
         (w/button {:label       "Clear"

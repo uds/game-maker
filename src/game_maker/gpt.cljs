@@ -1,7 +1,9 @@
 (ns game-maker.gpt
   (:require [openai :refer [OpenAI]]
+            ["fs" :as fs]
             [clojure.string :as str]))
 
+(def ^:private instructions-file "src/game_maker/gpt-instructions.txt")
 
 (def ^:private !openai-key (atom nil))
 (def ^:private !openai (atom nil))
@@ -16,6 +18,11 @@
   (if-let [openai @!openai]
     openai
     (reset! !openai (OpenAI. #js {:apiKey api-key}))))
+
+(defn- slurp [path]
+  (.toString 
+   (fs/readFileSync path #js {:encoding "utf8"
+                              :flag     "r"})))
 
 (defn clear-chat-history []
   (reset! !chat-history nil))
@@ -45,11 +52,20 @@
                                                     Do not repeat already generated code!"
                                                    ""
                                                    "'''"
-                                                   ";; Create a sphere with a given name at the given position with the given color."
+                                                   ";; For all functions in API:"
                                                    ";; The object name is a keyword."
-                                                   ";; The color is a keyword, e.g. :red, :blue etc."
-                                                   ";; Usage example:  (game-maker.dsl/create-sphere :yellow-ball -5 0 0 :yellow)"
-                                                   "(defn game-maker.dsl/create-sphere [name x y z color])"
+                                                   ";; The color parameter in all functions is a keyword."
+                                                   ";; Supported values are :red, :green, :blue, :yellow, :magenta, :cyan, :white, :black, :gray, :purple, :orange"
+                                                   ""
+                                                   ";; Create a sphere with a given name at the given position with the given color."
+                                                   ";; The typical diameter value is 2."
+                                                   ";; Usage example:  (game-maker.dsl/create-sphere :yellow-ball -5 0 0 2 :yellow)"
+                                                   "(defn game-maker.dsl/create-sphere [name x y z diameter color])"
+                                                   ""
+                                                   ";; Create a cuboid with a given name at the given position with the given color."
+                                                   ";; The typical width is 4 and height is 2."
+                                                   ";; Usage example:  (game-maker.dsl/create-cuboid :yellow-brick -5 0 0 4 2 :yellow)"
+                                                   "(defn game-maker.dsl/create-cuboid [name x y z width height color])"
                                                    ""
                                                    ";; Set the position of the object with a given name to the given position."
                                                    ";; Usage example:  (game-maker.dsl/set-position :yellow-ball 5 0 0)"
@@ -59,7 +75,7 @@
                                                    "(defn game-maker.dsl/dispose [name])"
                                                    "'''"])}
                               {:role    "system"
-                               :content (str "Already generated program (enclosed in ''' quotes): \n"
+                               :content (str "Following is a conversation history - the generated so far program (enclosed in ''' quotes): \n"
                                              "'''" @!chat-history "'''")}
                               {:role    "user"
                                :content prompt}]}]

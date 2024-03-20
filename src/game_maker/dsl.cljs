@@ -43,13 +43,24 @@
 
 (defn ^:export create-sphere
   "Create a sphere with a given name at the given position with the given color."
-  [name x y z color]
+  [name x y z diameter color]
   (println "-> Creating sphere with" name "name at" x y z "with color" color)
-  (let [sphere (bb/MeshBuilder.CreateSphere "sphere" #js {:diameter 2.0} (current-scene))]
+  (let [sphere (bb/MeshBuilder.CreateSphere "sphere" #js {:diameter diameter} (current-scene))]
     (set! sphere.position (bb/Vector3. x y z))
     (set! sphere.material (bb/StandardMaterial. "sphereMat"))
     (set! sphere.material.diffuseColor (get colors color))
     (swap! !objects replace-object name sphere)
+    nil))
+
+(defn ^:export create-cuboid
+  "Create a cuboid with a given name at the given position with the given color."
+  [name x y z width height color]
+  (println "-> Creating cuboid with" name "name at" x y z "with color" color)
+  (let [cuboid (bb/MeshBuilder.CreateBox "cuboid" #js {:width width :height height, } (current-scene))]
+    (set! cuboid.position (bb/Vector3. x y z))
+    (set! cuboid.material (bb/StandardMaterial. "cuboidMat"))
+    (set! cuboid.material.diffuseColor (get colors color))
+    (swap! !objects replace-object name cuboid)
     nil))
 
 (defn ^:export set-position
