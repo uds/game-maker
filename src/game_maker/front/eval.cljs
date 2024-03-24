@@ -1,31 +1,25 @@
 (ns game-maker.front.eval
-  (:require [cljs.js]
-            [cljs.analyzer]
-            [cljs.env]))
+  (:require [cljs.js :as cljs]
+            [cljs.env :as env]
+            [shadow.cljs.bootstrap.browser :as boot]))
 
-;; Links
-;; https://stackoverflow.com/questions/51573858/how-can-i-run-eval-in-clojurescript-with-access-to-the-namespace-that-is-calling
-;; https://gist.github.com/mfikes/66a120e18b75b6f4a3ecd0db8a976d84
-;; https://code.thheller.com/blog/shadow-cljs/2017/10/14/bootstrap-support.html
+(def ^:private compile-state (env/default-compiler-env))
 
-;; https://gist.github.com/mfikes/66a120e18b75b6f4a3ecd0db8a976d84
-;; (let [eval *eval*
-;;       st (cljs.js/empty-state)]
-;;   (set! *eval*
-;;         (fn [form]
-;;           (binding [cljs.env/*compiler* st
-;;                     *ns* (find-ns cljs.analyzer/*cljs-ns*)
-;;                     cljs.js/*eval-fn* cljs.js/js-eval]
-;;             (eval form)))))
-
-
-(defn evaluate [expr]
+(defn evaluate 
+  "Used to evaluate generated DSL ClojureScript code in the context of the game-maker.front.dsl namespace."
+  [expr]
   (js/console.log "[DEBUG] Evaluating: " expr)
-  (let [state (cljs.js/empty-state)
-        opts {:eval    cljs.js/js-eval
-              :context :expr
-              :verbose false
-              #_#_:ns 'cljs.core}
-        callback println]
-    (cljs.js/eval-str state expr nil opts callback)))
+  (let [opts {:eval    cljs/js-eval
+              :load    (partial boot/load compile-state)
+              :context :statement
+              :ns      'game-maker.front.dsl}]
+    (cljs/eval-str compile-state expr "[expr]" opts println)))
 
+(defn init
+  "Initializes the self-hosted Clojure bootstrap environment for the game-maker.front.dsl namespace.
+   See https://code.thheller.com/blog/shadow-cljs/2017/10/14/bootstrap-support.html"
+  [cb]
+  (boot/init compile-state
+             {:path "/js/bootstrap"
+              :load-on-init ['game-maker.front.dsl]}
+             cb))

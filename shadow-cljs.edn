@@ -7,16 +7,23 @@
 
  :source-paths ["src", "dev", "test"]
 
- :nrepl  {:port 8777}
+ :nrepl        {:port 8777}
 
- :builds {:app-front  {:target     :browser
-                       :output-dir "resources/public/js/compiled"
-                       :asset-path "/js/compiled"
-                       :modules    {:app-front {:init-fn game-maker.front.core/-main}}
-                       :dev        {:modules {:app-front {:init-fn  game-maker.front.core/-main}}}}
+ :builds       {:app-front  {:target     :browser
+                             :output-dir "resources/public/js/compiled"
+                             :asset-path "/js/compiled"
+                             :modules    {:app-front {:init-fn game-maker.front.core/-main}}
+                             :dev        {:modules {:app-front {:init-fn game-maker.front.core/-main}}}}
 
-          :app-server {:target           :node-script
-                       :main             game-maker.core/start
-                       :compiler-options {:infer-externs :auto}
-                       :output-to        "target/game-maker.js"
-                       :dev              {:main game-maker.core/start}}}}
+                :app-server {:target           :node-script
+                             :main             game-maker.core/start
+                             :compiler-options {:infer-externs :auto}
+                             :output-to        "target/game-maker.js"
+                             :dev              {:main game-maker.core/start}}
+
+                ;; see explanations at: https://code.thheller.com/blog/shadow-cljs/2017/10/14/bootstrap-support.html
+                :bootstrap  {:target     :bootstrap
+                             :output-dir "resources/public/js/bootstrap"
+                             :entries    [cljs.js game-maker.front.dsl]
+                             :exclude    #{cljs.js}
+                             :macros     []}}}

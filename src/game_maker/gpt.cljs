@@ -1,14 +1,62 @@
 (ns game-maker.gpt
   (:require [openai :refer [OpenAI]]
-            ["fs" :as fs]
             [clojure.string :as str]))
-
-(def ^:private instructions-file "src/game_maker/gpt-instructions.txt")
 
 (def ^:private !openai-key (atom nil))
 (def ^:private !openai (atom nil))
 
 (def !chat-history (atom nil))
+
+
+(def ^:private gpt-instructions
+  "
+You are a code generator AI.
+You will be asked to generate a code fragments given the instructions provided by a user at the end.
+   - The domain is a game development.
+   - The origin point is a center of canvas.
+   - The generated code should be in ClojureScript.
+   - Do not comment the generated code.
+   - Enclose generated code into ''' quotes.
+
+Use game engine API functions described below (enclosed into ''' quotes) to generate the resulting code fragment so that:
+   - Only use standard ClojureScript functions and macros.
+   - Do not define any new functions, always inline code.
+
+'''
+;; ------------------------------------------------------------------------------------------------------------
+;; For all functions in this API:
+;;
+;;  - The object name is a keyword.
+;;  - The color parameter in all functions is a keyword.
+;;    Supported color values are :red, :green, :blue, :yellow, :magenta, :cyan, :white, :black, :gray, :purple, :orange
+;; ------------------------------------------------------------------------------------------------------------
+
+;; Create a sphere with a given name at the given position with the given color.
+;; The typical diameter value is 2.
+;; Usage example:  (create-sphere :yellow-ball -5 0 0 2 :yellow)
+(defn create-sphere [name x y z diameter color])
+
+;; Create a cuboid with a given name at the given position with the given color.
+;; The typical width is 4 and height is 2.
+;; Usage example:  (create-cuboid :yellow-brick -5 0 0 4 2 :yellow)
+(defn create-cuboid [name x y z width height color])
+
+;; Returns position of the object with a given name as a vector [x y z].
+;; Usage example:  (get-position :yellow-ball) ; => [-5 0 0]
+(defn get-position [name])
+
+;; Set the position of the object with a given name to the given position.
+;; Usage example:  (set-position :yellow-ball 5 0 0)
+(defn set-position [name x y z])
+
+;; Changes color of the given object.
+;; Usage example:  (set-color :yellow-ball :green)
+(defn set-color [name color])
+
+;; Disposes object with a given name.
+(defn dispose [name])
+'''
+")
 
 
 (defn- init-openai! [api-key]
@@ -19,11 +67,6 @@
     openai
     (reset! !openai (OpenAI. #js {:apiKey api-key}))))
 
-(defn- slurp [path]
-  (.toString 
-   (fs/readFileSync path #js {:encoding "utf8"
-                              :flag     "r"})))
-
 (defn clear-chat-history []
   (reset! !chat-history nil))
 
@@ -31,49 +74,12 @@
   "Returns a response from the OpenAI chat API as a promise."
   [{:keys [api-key model prompt]}]
   (let [openai ^js (init-openai! api-key)
+        instructions gpt-instructions
         params {:model       model
                 :temperature 0            ;; temperature is the randomness of the output
                 :top_p       1            ;; top_p is the probability of the model's output
                 :messages    [{:role    "system"
-                               :content (str/join "\n"
-                                                  ["You are a code generator AI."
-                                                   "You will be asked to generate a code fragments given the specification in a user's prompt."
-                                                   " - The domain is a game development."
-                                                   " - The origin point is a center of canvas."
-                                                   " - The generated code should be in ClojureScript."
-                                                   " - Do not comment the generated code."
-                                                   ;;" - Add comments to to the generated code."
-                                                   ;;" - Store created objects into variables."
-                                                   ;;" - Generate only single statement at a time."
-                                                   ;;" - Enclose multiple generated s-forms into a (do ...) form."
-                                                   " - Enclose generated code into ''' quotes."
-                                                   ""
-                                                   "Use the following game engine API methods (enclosed into ''' quotes) to generate resulting code fragment.
-                                                    Do not repeat already generated code!"
-                                                   ""
-                                                   "'''"
-                                                   ";; For all functions in API:"
-                                                   ";; The object name is a keyword."
-                                                   ";; The color parameter in all functions is a keyword."
-                                                   ";; Supported values are :red, :green, :blue, :yellow, :magenta, :cyan, :white, :black, :gray, :purple, :orange"
-                                                   ""
-                                                   ";; Create a sphere with a given name at the given position with the given color."
-                                                   ";; The typical diameter value is 2."
-                                                   ";; Usage example:  (game-maker.dsl/create-sphere :yellow-ball -5 0 0 2 :yellow)"
-                                                   "(defn game-maker.dsl/create-sphere [name x y z diameter color])"
-                                                   ""
-                                                   ";; Create a cuboid with a given name at the given position with the given color."
-                                                   ";; The typical width is 4 and height is 2."
-                                                   ";; Usage example:  (game-maker.dsl/create-cuboid :yellow-brick -5 0 0 4 2 :yellow)"
-                                                   "(defn game-maker.dsl/create-cuboid [name x y z width height color])"
-                                                   ""
-                                                   ";; Set the position of the object with a given name to the given position."
-                                                   ";; Usage example:  (game-maker.dsl/set-position :yellow-ball 5 0 0)"
-                                                   "(defn game-maker.dsl/set-position [name x y z])"
-                                                   ""
-                                                   ";; Disposes object with a given name."
-                                                   "(defn game-maker.dsl/dispose [name])"
-                                                   "'''"])}
+                               :content instructions}
                               {:role    "system"
                                :content (str "Following is a conversation history - the generated so far program (enclosed in ''' quotes): \n"
                                              "'''" @!chat-history "'''")}
@@ -88,7 +94,5 @@
                                    (str/replace #"```" "")         ;; TODO: sometimes gpt generates code enclosed in ``` quotes
                                    (str/trim))]
                    (swap! !chat-history #(str % content "\n\n"))
-
-                   ;; TODO: sometimes gpt generates multiple s-forms that has to be enclosed into do form
-                   [(str "(do " content ")"), @!chat-history]))))))
+                   [content @!chat-history]))))))
   

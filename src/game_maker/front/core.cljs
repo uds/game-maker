@@ -1,8 +1,8 @@
 (ns game-maker.front.core
   (:require [htmx.org :as htmx]
             [babylonjs :as bb]
-            [game-maker.dsl :refer [!babylon]]
-            [game-maker.front.eval :as eval]))
+            [game-maker.front.eval :as eval]
+            [game-maker.front.dsl :refer [!babylon]]))
 
 
 (defn- create-camera
@@ -26,12 +26,6 @@
 
     (let [domeLight (bb/HemisphericLight. "light" (bb/Vector3. 1 5 -1))]
       (set! domeLight.intensity 0.9))
-
-    ;; draw red sphere
-    ;; (let [sphere (bb/MeshBuilder.CreateSphere "sphere" #js {:diameter 2.0} scene)]
-    ;;   (set! sphere.position (bb/Vector3. 0 0 0))
-    ;;   (set! sphere.material (bb/StandardMaterial. "sphereMat" scene))
-    ;;   (set! sphere.material.diffuseColor (bb/Color3. 1 0 0)))
 
     (.runRenderLoop engine (fn [] (.render scene)))
 
@@ -72,18 +66,13 @@
   (link-input-field-to-local-storage "gpt-model")
   (link-input-field-to-local-storage "gpt-prompt"))
 
-;; FIXME: a hack to get the code from the response and evaluate it.
-(defn on-after-swap [_]
-  (when-let [el (js/document.getElementById "query-code-result")]
-    (let [code (.-textContent el)]
-      (eval/evaluate code))))
-
 (defn -main []
+  (eval/init #(js/console.log "[DEBUG] ClojureScript bootstrap environment initialized!"))
+
   (js/console.log "[DEBUG] Game Maker started!")
 
   (htmx/on "htmx:sendError" on-error)
   (htmx/on "htmx:responseError" on-error)
-  (htmx/on "htmx:afterSwap" on-after-swap)
 
   ;; Initialize babylon.js once the page is loaded so the babylon can hookup with canvas HTML element. 
   ;; Note that we can't use "htmx:load" event as it is fired on every DOM change, including HTMX responses.
@@ -97,6 +86,5 @@
 (defn ^:dev/before-load close []
   (htmx/off "htmx:sendError" on-error)
   (htmx/off "htmx:responseError" on-error)
-  (htmx/off "htmx:afterSwap" on-after-swap)
   (.removeEventListener js/window "DOMContentLoaded" on-ready)
   (dispose-babylon!))

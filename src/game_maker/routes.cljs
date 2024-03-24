@@ -14,26 +14,10 @@
       (r/content-type "text/html")
       (res)))
 
-(defn- html-response [html]
-  (-> (h/html html)
-      (r/ok)
-      (r/content-type "text/html")))
-
-(defn- html-page-wrapper
-  "A wrapper for a handler function that converts result Hiccup data to HTML page before passing it to 'res' callback."
-  [handler]
-  (fn [req res raise]
-    (handler req #(res (html-response %)) raise)))
-
-(defn- html-page [html-fn]
-  (fn [req res _raise]
-    (-> (html-response (html-fn req))
-        (res))))
-
 (def ^:private routes
-  ["/" {""       {:get (html-page f/index-page)}
-        "send"   {:post (html-page-wrapper f/send-prompt)}
-        "clear"  {:post (html-page f/clear-chat-history)}}])
+  ["/" {""      {:get f/index-page}
+        "send"  {:post f/send-prompt}
+        "clear" {:post f/clear-chat-history}}])
 
 (defn router [req res raise]
   (if-let [{:keys [handler route-params]} (bidi/match-route* routes (:uri req) req)]

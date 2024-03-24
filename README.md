@@ -45,3 +45,22 @@ To start the Clojure REPL and connect to it using Calva, follow these steps:
 ``` 
 npm run server
 ```
+
+## Prompt examples
+
+Create canvas surrounded by green walls.
+Create a line of 4 yellow bricks at top center of canvas, with interval between bricks is 0.3.
+Create red ball in center.
+Move yellow bricks to the left by 5.
+
+---
+
+Create canvas surrounded by green walls.
+Create a line of 4 yellow bricks starting at top left corner of the canvas, with interval between bricks is 0.3.
+Create red ball in center.
+
+---
+
+Create canvas surrounded by green walls.
+Create a line of 4 orange bricks at the top of the canvas, stretched between the left and right walls so that:  the interval between bricks is 0.3 and the margin to the top wall is 2.
+Create red ball in center.

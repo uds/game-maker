@@ -7,4 +7,5 @@
 /*.log
 
 /resources/public/js/compiled
+/resources/public/js/bootstrap
 /resources/public/css/compiled
