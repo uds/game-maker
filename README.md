@@ -64,3 +64,8 @@ Create red ball in center.
 Create canvas surrounded by green walls.
 Create a line of 4 orange bricks at the top of the canvas, stretched between the left and right walls so that:  the interval between bricks is 0.3 and the margin to the top wall is 2.
 Create red ball in center.
+
+---
+
+Create a thin floor plate.
+Create 5 balls with different color each, floating over the floor at random positions and heights.

@@ -25,14 +25,6 @@
   []
   (:scene @!babylon))
 
-(defn ^:export dispose-all
-  "Disposes all objects."
-  []
-  (doseq [obj (vals @!objects)]
-    (.dispose obj))
-  (reset! !objects {})
-  (js/console.log "[DEBUG] All scene objects are disposed."))
-
 (defn- replace-object
   "Replaces the object with the given name with the new object."
   [objects name new-obj]
@@ -46,12 +38,27 @@
   (if-let [obj (@!objects name)]
     obj
     (throw (js/Error. (str "Object with name " name " not found.")))))
-  
 
+;; ---------------------------------------------------------
+;; API functions
+
+(defn ^:export dispose-all
+  "Disposes all objects."
+  []
+  (doseq [obj (vals @!objects)]
+    (.dispose obj))
+  (reset! !objects {})
+  (js/console.log "[DEBUG] All scene objects are disposed."))
+
+(defn ^:export rand-range 
+  "Returns a random floating number between the low and high (exclusive) numbers."
+  [low high]
+  (+ low (rand (- high low))))
+  
 (defn ^:export create-sphere
   "Create a sphere with a given name at the given position with the given color."
   [name x y z diameter color]
-  (js/console.log "-> Creating sphere with" name "name at" x y z "with diameter" diameter "and color" color)
+  (js/console.log "-> Creating sphere with" name "name at [" x y z "] with diameter" diameter "and color" color)
   (let [sphere (bb/MeshBuilder.CreateSphere "sphere" #js {:diameter diameter} (current-scene))]
     (set! sphere.position (bb/Vector3. x y z))
     (set! sphere.material (bb/StandardMaterial. "sphereMat"))
@@ -61,9 +68,9 @@
 
 (defn ^:export create-cuboid
   "Create a cuboid with a given name at the given position with the given color."
-  [name x y z width height color]
-  (js/console.log "-> Creating cuboid with" name "name at" x y z "with color" color)
-  (let [cuboid (bb/MeshBuilder.CreateBox "cuboid" #js {:width width :height height, } (current-scene))]
+  [name x y z height width depth color]
+  (js/console.log "-> Creating cuboid with" name "name at [" x y z "] with [" height width depth "] dimensions and color" color)
+  (let [cuboid (bb/MeshBuilder.CreateBox "cuboid" #js {:height height :width width :depth depth} (current-scene))]
     (set! cuboid.position (bb/Vector3. x y z))
     (set! cuboid.material (bb/StandardMaterial. "cuboidMat"))
     (set! cuboid.material.diffuseColor (get colors color))
@@ -80,7 +87,7 @@
 (defn ^:export set-position
   "Set the position of the  object with a given name to the given position."
   [name x y z]
-  (js/console.log "-> Setting position of" name "to" x y z)
+  (js/console.log "-> Setting position of" name "to [" x y z "]")
   (let [object (get-object name)]
     (set! object.position (bb/Vector3. x y z))
     nil))

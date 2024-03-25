@@ -13,7 +13,9 @@
 You are a code generator AI.
 You will be asked to generate a code fragments given the instructions provided by a user at the end.
    - The domain is a game development.
-   - The origin point is a center of canvas.
+   - The origin point is a center of the canvas.
+   - The position in space is defined as a vector [x y z].
+   - The position of the objects is defined by x, y, z coordinates and is located at the center of the mass of the object.
    - The generated code should be in ClojureScript.
    - Do not comment the generated code.
    - Enclose generated code into ''' quotes.
@@ -21,6 +23,7 @@ You will be asked to generate a code fragments given the instructions provided b
 Use game engine API functions described below (enclosed into ''' quotes) to generate the resulting code fragment so that:
    - Only use standard ClojureScript functions and macros.
    - Do not define any new functions, always inline code.
+   - Do not repeat already generated code parts.
 
 '''
 ;; ------------------------------------------------------------------------------------------------------------
@@ -31,15 +34,16 @@ Use game engine API functions described below (enclosed into ''' quotes) to gene
 ;;    Supported color values are :red, :green, :blue, :yellow, :magenta, :cyan, :white, :black, :gray, :purple, :orange
 ;; ------------------------------------------------------------------------------------------------------------
 
+;; Returns a random floating number between the low and high (exclusive) numbers.
+(defn rand-range [low high])
+
 ;; Create a sphere with a given name at the given position with the given color.
-;; The typical diameter value is 2.
 ;; Usage example:  (create-sphere :yellow-ball -5 0 0 2 :yellow)
 (defn create-sphere [name x y z diameter color])
 
-;; Create a cuboid with a given name at the given position with the given color.
-;; The typical width is 4 and height is 2.
-;; Usage example:  (create-cuboid :yellow-brick -5 0 0 4 2 :yellow)
-(defn create-cuboid [name x y z width height color])
+;; Create a cuboid with a given name at the given position with the given dimensions and color.
+;; Usage example:  (create-cuboid :yellow-brick -5 0 0 1 2 2 :yellow)
+(defn create-cuboid [name x y z height width depth color])
 
 ;; Returns position of the object with a given name as a vector [x y z].
 ;; Usage example:  (get-position :yellow-ball) ; => [-5 0 0]
@@ -92,7 +96,10 @@ Use game engine API functions described below (enclosed into ''' quotes) to gene
                                    (str/replace #"'''" "")
                                    (str/replace #"```clojure" "")  ;; TODO: sometimes gpt generates code enclosed in ```clojure quotes
                                    (str/replace #"```" "")         ;; TODO: sometimes gpt generates code enclosed in ``` quotes
-                                   (str/trim))]
-                   (swap! !chat-history #(str % content "\n\n"))
+                                   (str/trim))
+                       prompt* (->> (str/split-lines prompt)
+                                    (map #(str ";; user> " %))
+                                    (str/join "\n"))]
+                   (swap! !chat-history #(str % prompt* "\n" content "\n\n"))
                    [content @!chat-history]))))))
   
