@@ -1,5 +1,6 @@
 (ns game-maker.gpt
   (:require [openai :refer [OpenAI]]
+            ["fs" :as fs]
             [clojure.string :as str]))
 
 (def ^:private !openai-key (atom nil))
@@ -8,8 +9,14 @@
 (def !chat-history (atom nil))
 
 
-(def ^:private gpt-instructions
-  "
+(defn- slurp [path]
+  (.toString
+   (fs/readFileSync path #js {:encoding "utf8" :flag     "r"})))
+
+
+(defn- gpt-instructions []
+  (str
+   "
 You are a code generator AI.
 You will be asked to generate a code fragments given the instructions provided by a user at the end.
    - The domain is a game development.
@@ -21,46 +28,17 @@ You will be asked to generate a code fragments given the instructions provided b
    - Enclose generated code into ''' quotes.
 
 Use game engine API functions described below (enclosed into ''' quotes) to generate the resulting code fragment so that:
+'''
+" 
+   (slurp "src/game_maker/front/dsl_api.cljs")
+   "  
+'''
+IMPORTANT:
    - Only use standard ClojureScript functions and macros.
    - Do not define any new functions, always inline code.
+   - Do not use newly defined variables to pass values into DSL functions.
    - Do not repeat already generated code parts.
-
-'''
-;; ------------------------------------------------------------------------------------------------------------
-;; For all functions in this API:
-;;
-;;  - The object name is a keyword.
-;;  - The color parameter in all functions is a keyword.
-;;    Supported color values are :red, :green, :blue, :yellow, :magenta, :cyan, :white, :black, :gray, :purple, :orange
-;; ------------------------------------------------------------------------------------------------------------
-
-;; Returns a random floating number between the low and high (exclusive) numbers.
-(defn rand-range [low high])
-
-;; Create a sphere with a given name at the given position with the given color.
-;; Usage example:  (create-sphere :yellow-ball -5 0 0 2 :yellow)
-(defn create-sphere [name x y z diameter color])
-
-;; Create a cuboid with a given name at the given position with the given dimensions and color.
-;; Usage example:  (create-cuboid :yellow-brick -5 0 0 1 2 2 :yellow)
-(defn create-cuboid [name x y z height width depth color])
-
-;; Returns position of the object with a given name as a vector [x y z].
-;; Usage example:  (get-position :yellow-ball) ; => [-5 0 0]
-(defn get-position [name])
-
-;; Set the position of the object with a given name to the given position.
-;; Usage example:  (set-position :yellow-ball 5 0 0)
-(defn set-position [name x y z])
-
-;; Changes color of the given object.
-;; Usage example:  (set-color :yellow-ball :green)
-(defn set-color [name color])
-
-;; Disposes object with a given name.
-(defn dispose [name])
-'''
-")
+"))
 
 
 (defn- init-openai! [api-key]
@@ -78,12 +56,11 @@ Use game engine API functions described below (enclosed into ''' quotes) to gene
   "Returns a response from the OpenAI chat API as a promise."
   [{:keys [api-key model prompt]}]
   (let [openai ^js (init-openai! api-key)
-        instructions gpt-instructions
         params {:model       model
                 :temperature 0            ;; temperature is the randomness of the output
                 :top_p       1            ;; top_p is the probability of the model's output
                 :messages    [{:role    "system"
-                               :content instructions}
+                               :content (gpt-instructions)}
                               {:role    "system"
                                :content (str "Following is a conversation history - the generated so far program (enclosed in ''' quotes): \n"
                                              "'''" @!chat-history "'''")}

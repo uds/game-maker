@@ -12,7 +12,7 @@
   (let [opts {:eval    cljs/js-eval
               :load    (partial boot/load compile-state)
               :context :statement
-              :ns      'game-maker.front.dsl}]
+              :ns      'game-maker.front.dsl-api}]
     (cljs/eval-str compile-state expr "[expr]" opts
                    (fn [result]
                      (if-let [error (:error result)]

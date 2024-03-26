@@ -2,7 +2,7 @@
   (:require [htmx.org :as htmx]
             [babylonjs :as bb]
             [game-maker.front.eval :as eval]
-            [game-maker.front.dsl :refer [!babylon]]))
+            [game-maker.front.dsl :as dsl]))
 
 
 (defn- create-camera
@@ -31,18 +31,18 @@
 
     (let [resize-fn #(.resize engine)]
       (.addEventListener js/window "resize" resize-fn)
-      (reset! !babylon {:engine    engine
+      (reset! dsl/!babylon {:engine    engine
                         :scene     scene
                         :resize-fn resize-fn}))))
 
 (defn- dispose-babylon!
   "Disposes babylon engine and scene."
   []
-  (when-let [{:keys [engine resize-fn]} @!babylon]
+  (when-let [{:keys [engine resize-fn]} @dsl/!babylon]
     (js/console.log "[DEBUG] babylon.js disposed")
     (.dispose engine)
     (.removeEventListener js/window "resize" resize-fn)
-    (reset! !babylon nil)))
+    (reset! dsl/!babylon nil)))
 
 ;; ---------------------------------------------------------
 
@@ -68,6 +68,7 @@
 
 (defn -main []
   (eval/init #(js/console.log "[DEBUG] ClojureScript bootstrap environment initialized!"))
+  (.then (dsl/init) (js/console.log "[DEBUG] DSL API initialized!"))
 
   (js/console.log "[DEBUG] Game Maker started!")
 
