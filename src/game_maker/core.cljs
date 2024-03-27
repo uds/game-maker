@@ -10,9 +10,7 @@
                    ;; override default static resources config
                    (assoc-in [:static :resources] "resources/public")
                    ;; disable anti-forgery middleware for this simple app
-                   (assoc-in [:security :anti-forgery] false)
-                   ;; add content type for WASM assemblies, e.g. one that comes with HavokPhysics plugin
-                   (assoc-in [:responses :content-types] {:mime-types {"wasm" "application/wasm"}}))]
+                   (assoc-in [:security :anti-forgery] false))]
     (defaults/wrap-defaults handler config)))
 
 (def !server (atom nil))

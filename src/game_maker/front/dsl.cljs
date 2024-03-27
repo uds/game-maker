@@ -1,36 +1,21 @@
 (ns game-maker.front.dsl
   (:require [babylonjs :as bb]
-            ["@babylonjs/havok":as HavokPlugin]
-            [game-maker.front.dsl-api :as api]))
+            [game-maker.front.dsl-api :as api]
+            [game-maker.front.babylon :as b2]))
 
 
-;; Stores references to the babylon engine and scene: {:engine ??, :scene ??, :resize-fn ??}
-(def !babylon (atom nil))
 
-
-(defn- current-scene
-  "Returns the current babylon scene."
-  []
-  (:scene @!babylon))
-
-(defn- vec3 
-  "Converts a vector [x y z] to a babylon Vector3 object."
-  [[x y z]]
-  (bb/Vector3. x y z))
-
-(defn- size3-js
-  "Converts a size vector [height width depth] to a babylon Vector3 object."
-  [[height width depth]]
-  #js {:height height :width width :depth depth})
-
-(defn dispose-all 
+(defn ^:export reset 
   "Called by the GUI Clear button handler"
   []
-  (api/dispose-all @api/!dsl))
+  (api/dispose-all @api/!dsl)
+  ;; set gravity to zero.
+  (.. (b2/current-scene) getPhysicsEngine (setGravity (bb/Vector3. 0 0.00000001 0))))
 
 
 ;; ---------------------------------------------------------
 ;; API functions
+
 
 (deftype Dsl [objects]
   Object
@@ -62,8 +47,11 @@
 
   (create-sphere ^:export [this name position diameter color]
     (js/console.log "-> Creating sphere with" name "name at " position " with diameter" diameter "and color" color)
-    (let [sphere (bb/MeshBuilder.CreateSphere "sphere" #js {:diameter diameter} (current-scene))]
-      (set! sphere.position (vec3 position))
+    (let [scene (b2/current-scene)
+          sphere (bb/MeshBuilder.CreateSphere "sphere" #js {:diameter diameter} scene)
+          imposter (bb/PhysicsImpostor. sphere bb/PhysicsImpostor.SphereImpostor #js {:mass 1 :restitution 0.5} scene)]
+      (set! sphere.physicsImpostor imposter)
+      (set! sphere.position (b2/vec3 position))
       (set! sphere.material (bb/StandardMaterial. "sphereMat"))
       (set! sphere.material.diffuseColor (get api/colors color))
       (.set-object! this name sphere)
@@ -71,8 +59,11 @@
 
   (create-cuboid ^:export [this name position size color]
     (js/console.log "-> Creating cuboid with" name "name at " position " with " size " dimensions and color" color)
-    (let [cuboid (bb/MeshBuilder.CreateBox "cuboid" (size3-js size) (current-scene))]
-      (set! cuboid.position (vec3 position))
+    (let [scene (b2/current-scene)
+          cuboid (bb/MeshBuilder.CreateBox "cuboid" (b2/size3-js size) scene)
+          imposter (bb/PhysicsImpostor. cuboid bb/PhysicsImpostor.BoxImpostor #js {:mass 0 :restitution 0.5} scene)]
+      (set! cuboid.physicsImpostor imposter)
+      (set! cuboid.position (b2/vec3 position))
       (set! cuboid.material (bb/StandardMaterial. "cuboidMat"))
       (set! cuboid.material.diffuseColor (get api/colors color))
       (.set-object! this name cuboid)
@@ -86,23 +77,20 @@
   (set-position ^:export [this name position]
     (js/console.log "-> Setting position of" name "to" position)
     (let [object (.get-object this name)]
-      (set! object.position (vec3 position))
+      (set! object.position (b2/vec3 position))
       nil))
 
   (set-color ^:export [this name color]
     (js/console.log "-> Setting color of" name "to" color)
     (let [object (.get-object this name)]
       (set! object.material.diffuseColor (get api/colors color))
+      nil))
+
+  (set-gravity ^:export [_this gravity-vector]
+    (js/console.log "-> Setting gravity to" gravity-vector)
+    (let [scene (b2/current-scene)]
+      (.. scene getPhysicsEngine (setGravity (b2/vec3 gravity-vector)))
       nil)))
 
 ;; Creates an instance of the DSL API
 (reset! api/!dsl (Dsl. {}))
-
-(defn init
-  "Initializes the DSL API. The function is asynchronous and Returns a promise."
-  []
-  ;; FIXME: the HavokPhysics.wasm file has to be copied to the public folder (e.g., /public/assets) 
-  ;;        in order to be loaded by the browser during the plugin initialization.
-  ;; Load the Havok physics plugin
-  (HavokPlugin. #js {:locateFile (fn [path] 
-                                   (str "/assets/" path))}))

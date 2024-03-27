@@ -6,7 +6,7 @@
 ;; For all functions in this API:
 ;;
 ;;  - All valid DSL functions are defined in the DslApi ClojureScript protocol. 
-;;  - Every DSL function is always called with the first parameter being a reference to the context object stored in the atom referenced by !dsl variable.
+;;  - Every DSL function is always called with the first parameter being a reference to the context object @!dsl.
 ;;  - The DSL function is an invocation of the protocol method on the context object, e.g.: (method-name @!dsl ...).
 ;;  - The object name is a keyword.
 ;;  - The object position is a vector [x y z].
@@ -44,11 +44,15 @@
   ;; Disposes object with a given name.
   ;; Usage example:  (dispose @!dsl :yellow-ball)
   (dispose [this name])
-  
+
   ;; Disposes all objects created so far.
   ;; Usage example:  (dispose-all @!dsl)
   (dispose-all [this])
              
+  ;; Set's the world gravity to a given vector.
+  ;; Usage example: (set-gravity @!dsl [0 -9.81 0])             
+  (set-gravity [this gravity-vector])
+
   ;; Create a sphere with a given name at the given position with the given color.
   ;; Usage example:  (create-sphere @!dsl :yellow-ball [-5 0 0] 2 :yellow)
   (create-sphere [this name position diameter color])
