@@ -6,6 +6,15 @@
 ;; Stores references to the babylon engine and scene: {:engine ??, :scene ??, :resize-fn ??}
 (def ^:private !babylon (atom nil))
 
+;; Allows to the gravity to a very small value to simulate zero gravity. 
+;; Using zero will mess with rigid bodies that have a mass (is it Cannon specific?)
+(def zero-gravity-vector (bb/Vector3. 0 0.00000001 0))
+
+(defn- set-gravity*
+  "Sets current scene gravity to the given vector."
+  [scene vector]
+  (.. scene getPhysicsEngine (setGravity vector)))
+
 
 (defn- create-camera
   "Create a camera and return it."
@@ -32,7 +41,7 @@
     ;; initialize physics
     (set! js/window.CANNON cannon)
     (.enablePhysics scene)
-    (.. scene getPhysicsEngine (setGravity (bb/Vector3. 0 0.00000001 0)))
+    (set-gravity* scene zero-gravity-vector)
 
     (.runRenderLoop engine (fn [] (.render scene)))
 
@@ -55,6 +64,11 @@
   "Returns the current babylon scene."
   []
   (:scene @!babylon))
+
+(defn set-gravity 
+  "Sets current scene gravity to the given vector."
+  [vector]
+  (.. (current-scene) getPhysicsEngine (setGravity vector)))
 
 (defn vec3 
   "Converts a vector [x y z] to a babylon Vector3 object."

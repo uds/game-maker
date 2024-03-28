@@ -69,3 +69,4 @@ Create red ball in center.
 
 Create a thin floor plate with size 20 on 20.
 Create 50 balls with different color each, floating over the floor at random positions and heights.
+Set gravity of Jupiter.

@@ -5,12 +5,11 @@
 
 
 
-(defn ^:export reset 
+(defn ^:export reset
   "Called by the GUI Clear button handler"
   []
   (api/dispose-all @api/!dsl)
-  ;; set gravity to zero.
-  (.. (b2/current-scene) getPhysicsEngine (setGravity (bb/Vector3. 0 0.00000001 0))))
+  (b2/set-gravity b2/zero-gravity-vector))
 
 
 ;; ---------------------------------------------------------
@@ -88,9 +87,8 @@
 
   (set-gravity ^:export [_this gravity-vector]
     (js/console.log "-> Setting gravity to" gravity-vector)
-    (let [scene (b2/current-scene)]
-      (.. scene getPhysicsEngine (setGravity (b2/vec3 gravity-vector)))
-      nil)))
+    (b2/set-gravity (b2/vec3 gravity-vector))
+    nil))
 
 ;; Creates an instance of the DSL API
 (reset! api/!dsl (Dsl. {}))
