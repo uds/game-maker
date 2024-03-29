@@ -20,8 +20,9 @@
     "build-report": "npx shadow-cljs run shadow.cljs.build-report app-front target/build-report-front.html"
   },
   "dependencies": {
-    "openai": "4.29.1",
-    "babylonjs": "6.47.0",
+    "openai": "4.29.2",
+    "babylonjs": "6.48.1",
+    "cannon": "0.6.2", 
     "htmx.org": "1.9.11",
     "@tailwindcss/aspect-ratio": "0.4.2",
     "@tailwindcss/forms": "0.5.7",

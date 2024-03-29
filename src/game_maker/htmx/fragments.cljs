@@ -70,7 +70,7 @@
                        :hx-post                  "/clear"
                        :hx-target                "#query-result"
                        :hx-swap                  "innerHTML"
-                       :hx-on:clear-chat-history "game_maker.front.dsl.dispose_all()"})
+                       :hx-on:clear-chat-history "game_maker.front.dsl.reset()"})
             
             (w/button {:label                       "Send"
                        :icon                        (w/send-icon {:class "button-icon h-6 w-6 mr-2"})
