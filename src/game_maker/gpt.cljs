@@ -5,6 +5,8 @@
 (def ^:private !openai-key (atom nil))
 (def ^:private !openai (atom nil))
 
+
+;; Stores the chat history as a list of records. Each record is a map with keys :role, :content and :answer.
 (def !chat-history (atom nil))
 
 
@@ -74,6 +76,14 @@ Use game engine API functions described below (enclosed into ''' quotes) to gene
 (defn clear-chat-history []
   (reset! !chat-history nil))
 
+(defn- extract-code [result]
+  (-> (get-in (js->clj result :keywordize-keys true)
+              [:choices 0 :message :content])
+      (str/replace #"'''" "")
+      (str/replace #"```clojure" "")  ;; sometimes gpt generates code enclosed in ```clojure quotes
+      (str/replace #"```" "")         ;; sometimes gpt generates code enclosed in ``` quotes
+      (str/trim)))
+
 (defn execute
   "Returns a response from the OpenAI chat API as a promise."
   [{:keys [api-key model prompt]}]
@@ -91,12 +101,7 @@ Use game engine API functions described below (enclosed into ''' quotes) to gene
                                :content prompt}]}]
     (-> (.. openai -chat -completions (create (clj->js params)))
         (.then (fn [result]
-                 (let [content (-> (get-in (js->clj result :keywordize-keys true)
-                                           [:choices 0 :message :content])
-                                   (str/replace #"'''" "")
-                                   (str/replace #"```clojure" "")  ;; TODO: sometimes gpt generates code enclosed in ```clojure quotes
-                                   (str/replace #"```" "")         ;; TODO: sometimes gpt generates code enclosed in ``` quotes
-                                   (str/trim))
+                 (let [content (extract-code result)
                        prompt* (->> (str/split-lines prompt)
                                     (map #(str ";; user> " %))
                                     (str/join "\n"))]
