@@ -36,7 +36,7 @@
         [:script {:src  "/js/compiled/app-front.js"
                   :type "text/javascript"}]
 
-        [:div {:class "mx-auto max-w-screen-2xl h-full py-8 px-4 sm:px-8"}
+        [:div {:class "mx-auto _max-w-screen-2xl h-full py-8 px-4 sm:px-8"}
          ;; title
          [:h1 {:class "text-3xl font-semibold text-neutral-500"} "Game Maker"]
          [:p "Welcome to Game Maker!"]

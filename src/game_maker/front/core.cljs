@@ -1,5 +1,6 @@
 (ns game-maker.front.core
   (:require [htmx.org :as htmx]
+            [game-maker.front.dsl]
             [game-maker.front.eval :as eval]
             [game-maker.front.babylon :as b2]))
 
