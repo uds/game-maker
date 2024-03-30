@@ -28,6 +28,9 @@
         engine (bb/Engine. canvas true)
         scene  (bb/Scene. engine)
         camera (create-camera scene)]
+    
+    ;; display axes's helper
+    (bb/AxesViewer. scene 2)
 
     ;; Prevents bubbling of the wheel events to the parent element so the parent doesn't scroll when mouse is over the canvas.
     ;; No event removal is needed on close as the event handler will be destroyed when the canvas is removed from the DOM.
@@ -41,7 +44,9 @@
     ;; initialize physics
     (set! js/window.CANNON cannon)
     (.enablePhysics scene)
-    (set-gravity* scene zero-gravity-vector)
+    (set-gravity* scene zero-gravity-vector) 
+    (set! scene.physicsEnabled false)
+    (set! scene.collisionsEnabled false)
 
     (.runRenderLoop engine (fn [] (.render scene)))
 
@@ -65,10 +70,18 @@
   []
   (:scene @!babylon))
 
+(defn physics-engine
+  "Returns the current babylon physics engine."
+  []
+  (.. (current-scene) getPhysicsEngine))
+
 (defn set-gravity 
   "Sets current scene gravity to the given vector."
   [vector]
-  (.. (current-scene) getPhysicsEngine (setGravity vector)))
+  (set! (.-physicsEnabled (current-scene)) true)
+  (set! (.-collisionsEnabled (current-scene)) true)
+
+  (.setGravity (physics-engine) vector))
 
 (defn vec3 
   "Converts a vector [x y z] to a babylon Vector3 object."
@@ -76,6 +89,6 @@
   (bb/Vector3. x y z))
 
 (defn size3-js
-  "Converts a size vector [height width depth] to a babylon Vector3 object."
-  [[height width depth]]
-  #js {:height height :width width :depth depth})
+  "Converts a size vector [width height depth] to a babylon Vector3 object."
+  [[width height depth]]
+  #js {:width width :height height :depth depth})

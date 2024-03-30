@@ -10,7 +10,7 @@
 ;;  - The DSL function is an invocation of the protocol method on the context object, e.g.: (method-name @!dsl ...).
 ;;  - The object name is a keyword.
 ;;  - The object position is a vector [x y z].
-;;  - The object size is a vector [height width depth].
+;;  - The object size is a vector [width height depth].
 ;;  - The object color is a keyword. Supported color values are listed in the "colors" map.
 ;; ------------------------------------------------------------------------------------------------------------
 
@@ -49,15 +49,17 @@
   ;; Usage example:  (dispose-all @!dsl)
   (dispose-all [this])
              
-  ;; Set's the world gravity to a given vector.
+  ;; Set's the world gravity to a given vector. Returns nil.
   ;; Usage example: (set-gravity @!dsl [0 -9.81 0])             
   (set-gravity [this gravity-vector])
 
-  ;; Create a sphere with a given name at the given position with the given color.
+  ;; Create a sphere with a given name at the given position with the given color. Returns nil.
+  ;; The positions of the sphere is at its center of mass.
   ;; Usage example:  (create-sphere @!dsl :yellow-ball [-5 0 0] 2 :yellow)
   (create-sphere [this name position diameter color])
 
-  ;; Create a cuboid with a given name at the given position with the given dimensions and color.
+  ;; Create a cuboid with a given name at the given position with the given dimensions and color. Returns nil.
+  ;; The positions of the cuboid is at its center of mass.
   ;; Usage example:  (create-cuboid @!dsl :yellow-brick [-5 0 0] [1 2 2] :yellow)
   (create-cuboid [this name position size color])
 
@@ -65,10 +67,10 @@
   ;; Usage example:  (get-position @!dsl :yellow-ball) ; => [-5 0 0]
   (get-position [this name])
 
-  ;; Set the position of the object with a given name to the given position.
+  ;; Set the position of the object with a given name to the given position. Returns nil.
   ;; Usage example:  (set-position @!dsl :yellow-ball [5 0 0])
   (set-position [this name position])
 
-  ;; Changes the color of the given object.
+  ;; Changes the color of the given object. Returns nil.
   ;; Usage example:  (set-color @!dsl :yellow-ball :green)
   (set-color [this name color]))

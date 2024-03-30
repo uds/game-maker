@@ -70,3 +70,14 @@ Create red ball in center.
 Create a thin floor plate with size 20 on 20.
 Create 50 balls with different color each, floating over the floor at random positions and heights.
 Set gravity of Jupiter.
+
+---
+
+create two balls.
+create thin bar connecting positions of these balls.
+
+---
+
+Draw floor of size 30.
+Draw labyrinth of 10 walls on the floor.
+Put a green ball on the floor, at the start of the labyrinth.

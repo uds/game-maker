@@ -17,7 +17,9 @@ button,a:focus {
   outline: none;
 }
 
+
 /* custom CSS  */ 
+
 
 /* hide the send icon when the button is in the process of sending a request */
 .button-indicator .button-icon {
@@ -26,4 +28,17 @@ button,a:focus {
 }
 .button-indicator.htmx-request .button-icon {
   opacity: 0;
+}
+
+
+/* tooltips */
+.tooltip {
+  opacity: 0;
+  transition: opacity 200ms ease-in-out;
+  @apply invisible absolute;
+}
+
+.has-tooltip:hover .tooltip {
+  opacity: 1;
+  @apply visible z-50;
 }
