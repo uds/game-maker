@@ -1,29 +1,22 @@
-{:dependencies [[macchiato/core "0.2.24" :exclusions [com.cognitect/transit-cljs]]
-                [org.slf4j/slf4j-nop "2.0.7"]  ;; used only to get rid of SLF4J warnings during compile
-                [bidi "2.1.6"]
-                [hiccups "0.3.0"]
-                ;; DEV dependencies
+{:dependencies [;; DEV dependencies
                 [binaryage/devtools "1.0.7"]]
 
  :source-paths ["src", "dev", "test"]
 
  :nrepl        {:port 8777}
 
- :builds       {:app-front  {:target     :browser
-                             :output-dir "resources/public/js/compiled"
-                             :asset-path "/js/compiled"
-                             :modules    {:app-front {:init-fn game-maker.front.core/-main}}
-                             :dev        {:modules {:app-front {:init-fn game-maker.front.core/-main}}}}
+ :builds       {:app  {:target     :browser
+                       :output-dir "resources/public/js/compiled"
+                       :asset-path "/js/compiled"
+                       :modules    {:app {:init-fn game-maker.core/-main}}
+                       :dev        {:modules {:app {:init-fn game-maker.core/-main}}}
 
-                :app-server {:target           :node-script
-                             :main             game-maker.core/start
-                             :compiler-options {:infer-externs :auto}
-                             :output-to        "target/game-maker.js"
-                             :dev              {:main game-maker.core/start}}
+                       :devtools   {:http-root "resources/public"
+                                    :http-port 3000}}
 
                 ;; see explanations at: https://code.thheller.com/blog/shadow-cljs/2017/10/14/bootstrap-support.html
                 :bootstrap  {:target     :bootstrap
                              :output-dir "resources/public/js/bootstrap"
-                             :entries    [cljs.js game-maker.front.dsl]
+                             :entries    [cljs.js game-maker.dsl]
                              :exclude    #{cljs.js}
                              :macros     []}}}

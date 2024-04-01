@@ -40,12 +40,6 @@ To start the Clojure REPL and connect to it using Calva, follow these steps:
 5. Search for "Calva: Jack-in" and select the appropriate option for your project setup.
 6. Calva will start the Clojure REPL and connect to it.
 
-### Start node server
-
-``` 
-npm run server
-```
-
 ## Prompt examples
 
 Create canvas surrounded by green walls.

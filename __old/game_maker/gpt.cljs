@@ -1,7 +1,7 @@
 (ns game-maker.gpt
   (:require [openai :refer [OpenAI]]
-            [clojure.string :as str])
-  (:require-macros [game-maker.utils :refer [compile-time-slurp]]))
+            ["fs" :as fs]
+            [clojure.string :as str]))
 
 (def ^:private !openai-key (atom nil))
 (def ^:private !openai (atom nil))
@@ -9,6 +9,12 @@
 
 ;; Stores the chat history as a list of messages, where message is a map with keys :role and :content.
 (def !chat-history (atom nil))
+
+
+(defn- slurp [path]
+  (.toString
+   (fs/readFileSync path #js {:encoding "utf8" :flag     "r"})))
+
 
 (defn- gpt-instructions []
   (str
@@ -33,8 +39,7 @@ You will be using a special ClojureScript DSL to generate the code:
 
 Following is a ClojureScript file that defines the DSL API, use it to generate the code:
 "
-   ;; the content of the DSL API source file is read during the compile time
-   (compile-time-slurp "src/game_maker/dsl_api.cljs")))
+   (slurp "src/game_maker/front/dsl_api.cljs")))
 
 
 (defn- init-openai! [api-key]
@@ -43,8 +48,7 @@ Following is a ClojureScript file that defines the DSL API, use it to generate t
     (reset! !openai nil))
   (if-let [openai @!openai]
     openai
-    (reset! !openai (OpenAI. #js {:apiKey api-key
-                                  :dangerouslyAllowBrowser true}))))
+    (reset! !openai (OpenAI. #js {:apiKey api-key}))))
 
 (defn clear-chat-history []
   (reset! !chat-history nil))
@@ -82,7 +86,6 @@ Following is a ClojureScript file that defines the DSL API, use it to generate t
                  (let [answer-msg (extract-message result)
                        code       (extract-code answer-msg)
                        history    (update-history! prompt-msg 
-                                                   (assoc answer-msg :content code))]  ;; sore a code that is stripped of the quotes.
-                   (println "code:" history)
+                                                   (assoc answer-msg :content code))]
                    [code history]))))))
   

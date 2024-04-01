@@ -1,0 +1,55 @@
+/* 
+  TailwindCSS sources.
+
+  This file is compiled by tilwindcss tool into resources/public/css/compiled/styles.css
+*/
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* Custom scroll-bars for the WebKit based browsers */    
+*::-webkit-scrollbar {
+  width: 0.4em;
+  height: 0.4em;
+}
+*::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0,0,0,0);
+  background-color: rgba(128,128,128,0.1); 
+}
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(128,128,128,0.4); 
+  outline: 1px solid slategrey;
+}
+
+/* Disable default focus outline for buttons and links */
+button,a:focus {
+  outline: none;
+}
+
+/* Disable tap highlight for input control on iOS browsers */
+input {
+  -webkit-tap-highlight-color:rgba(0,0,0,0);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Hide the send icon when the button is in the process of sending a request */
+.button-indicator .button-icon {
+  opacity: 1;
+  transition: opacity 200ms ease-out;
+}
+.button-indicator.htmx-request .button-icon {
+  opacity: 0;
+}
+
+/* Tooltips */
+.tooltip {
+  opacity: 0;
+  transition: opacity 200ms ease-in-out;
+  @apply invisible absolute;
+}
+.has-tooltip:hover .tooltip {
+  opacity: 1;
+  @apply visible z-50;
+}

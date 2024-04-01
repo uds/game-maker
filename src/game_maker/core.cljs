@@ -1,33 +1,19 @@
 (ns game-maker.core
-  (:require [macchiato.server :as server]
-            [macchiato.middleware.defaults :as defaults]
-            [game-maker.routes :as routes]))
+  (:require [game-maker.dsl]
+            [game-maker.eval :as eval]
+            [game-maker.gpt]
+            [game-maker.babylon :as b2]))
 
-(defn- wrap-server-defaults
-  "Middleware configuration"
-  [handler]
-  (let [config (-> defaults/site-defaults
-                   ;; override default static resources config
-                   (assoc-in [:static :resources] "resources/public")
-                   ;; disable anti-forgery middleware for this simple app
-                   (assoc-in [:security :anti-forgery] false))]
-    (defaults/wrap-defaults handler config)))
+(defn -main []
+  ;; TODO: these initializations are async
+  (eval/init #(js/console.log "[DEBUG] ClojureScript bootstrap environment initialized!"))
 
-(def !server (atom nil))
+  (js/console.log "[DEBUG] Game Maker started!"))
 
-(defn start
-  "The server's PROD main entry point."
-  []
-  (let [host "0.0.0.0"
-        port 3000]
-    (reset! !server
-            (server/start
-             {:handler    (wrap-server-defaults routes/router)
-              :host       host
-              :port       port
-              :on-success #(js/console.log "Server started on" (str host ":" port))}))))
+(defn ^:dev/after-load hot-reload []
+  (-main)
+  ;; need to start babylon after hot-reload as DOM "load" event is not triggered.
+  (b2/create-babylon!))
 
-(defn ^:dev/after-load after-load
-  "This function is called by the shadow-cljs after the code is reloaded."
-  []
-  (js/console.log "** reload! **"))
+(defn ^:dev/before-load close []
+  (b2/dispose-babylon!))
