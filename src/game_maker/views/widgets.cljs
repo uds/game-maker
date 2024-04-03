@@ -41,26 +41,28 @@
    [:path {:fill "currentColor"
            :d    "M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"}]])
 
-;; TODO: disable button while it's waiting for response (to prevent double clicks)
-
-(defn button [{:keys [class label icon tooltip]}]
+(defn button [{:keys [class label icon tooltip waiting? on-click]}]
   [:button (merge {:class (str "has-tooltip px-4 py-2 rounded-md border border-transparent shadow-md text-base font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 text-white bg-neutral-500 hover:bg-neutral-600 focus:ring-neutral-500" " "
                                class)
-                   :type  "button"})
+                   :type  "button"
+                   :disabled waiting?
+                   :on-click on-click})
    [:span {:class "sr-only"} "Send"]
 
    (when tooltip
-     [:span {:class "tooltip hidden sm:inline rounded border shadow-lg p-2 bg-gray-100 font-normal text-neutral-700 -ml-16 -mt-16"}
+     [:span {:class "tooltip hidden sm:inline rounded border shadow-lg p-2 bg-gray-100 font-normal text-neutral-700 _whitespace-nowrap -ml-16 mt-12"}
       tooltip])
 
    [:div {:class "flex"}
     [:div {:class "button-indicator relative "}
-     icon
-     [spinner {:class "htmx-indicator absolute top-0 left-0 h-6 w-6 text-white fill-neutral-400 animate-spin"}]]
+     (if waiting?
+       [spinner {:class "h-6 w-6 text-white fill-neutral-400 animate-spin"}]
+       icon)]
+
     (when label
       [:span {:class "ml-2 hidden md:inline"} label])]])
 
-(defn input [{:keys [class label name placeholder auto-complete]}]
+(defn input [{:keys [class label name value placeholder auto-complete on-change]}]
   [:div {:class class}
    [:label {:for   name
             :class "block text-sm font-medium text-neutral-700"}
@@ -69,16 +71,21 @@
             :class         "form-input mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-neutral-400 focus:ring-neutral-500 sm:text-sm"
             :type          "text"
             :name          name
+            :value         value
             :placeholder   placeholder
-            :auto-complete auto-complete}]])
+            :auto-complete auto-complete
+            :on-change     on-change}]])
 
 
-(defn textarea [{:keys [class label name rows]}]
+(defn textarea [{:keys [class label name value rows on-change]} content]
   [:div {:class class}
    [:label {:for   name
             :class "block text-sm font-medium text-neutral-700"}
     label]
-   [:textarea {:id    name
-               :class "form-textarea mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-neutral-400 focus:ring-neutral-400 sm:text-sm"
-               :name  name
-               :rows  (or rows 3)}]])
+   [:textarea {:id        name
+               :class     "form-textarea mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-neutral-400 focus:ring-neutral-400 sm:text-sm"
+               :name      name
+               :rows      (or rows 3)
+               :value     value
+               :on-change on-change}
+    content]])

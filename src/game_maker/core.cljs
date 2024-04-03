@@ -1,18 +1,18 @@
 (ns game-maker.core
-  (:require ["react-dom/client" :refer [createRoot]]
+  (:require ["react-dom/client" :refer (createRoot)]
             [reagent.core :as r]
             [game-maker.dsl]
             [game-maker.eval :as eval]
             [game-maker.gpt]
             [game-maker.babylon :as b2]
-            [game-maker.views.main-panel :refer [main-panel]]))
+            [game-maker.views.main-panel :refer (main-panel)]))
 
 (defonce ^:private app-root (createRoot (js/document.getElementById "app")))
 
 (defn -main []
   ;; these initializations are async
   (eval/init (fn []
-               (.render app-root (r/as-element [main-panel]))
+               (.render app-root (r/as-element [:f> main-panel]))
                (js/console.log "[DEBUG] Game Maker started!")
 
                ;; Initializing babylon.js in the next render tick, to ensure that DOM was constructed 

@@ -65,7 +65,7 @@ Following is a ClojureScript file that defines the DSL API, use it to generate t
       (str/trim)))
 
 (defn execute
-  "Returns a response from the OpenAI chat API as a promise."
+  "Returns a response from the OpenAI chat API as a promise of vector [code history]."
   [{:keys [api-key model prompt]}]
   (let [openai     ^js (init-openai! api-key)
         prompt-msg {:role    "user"
@@ -83,6 +83,5 @@ Following is a ClojureScript file that defines the DSL API, use it to generate t
                        code       (extract-code answer-msg)
                        history    (update-history! prompt-msg 
                                                    (assoc answer-msg :content code))]  ;; sore a code that is stripped of the quotes.
-                   (println "code:" history)
                    [code history]))))))
   
