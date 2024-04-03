@@ -28,6 +28,6 @@
    See https://code.thheller.com/blog/shadow-cljs/2017/10/14/bootstrap-support.html"
   [cb]
   (boot/init compile-state
-             {:path "/js/bootstrap"
+             {:path "js/bootstrap"
               :load-on-init [dsl-ns]}
              cb))
