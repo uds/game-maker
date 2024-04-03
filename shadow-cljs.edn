@@ -6,14 +6,18 @@
 
  :nrepl        {:port 8777}
 
- :builds       {:app       {:target     :browser
-                            :output-dir "resources/public/js/compiled"
-                            :asset-path "/js/compiled"
-                            :modules    {:app {:init-fn game-maker.core/-main}}
-                            :dev        {:modules {:app {:init-fn game-maker.core/-main}}}
+ :builds       {:app       {:target           :browser
+                            :output-dir       "resources/public/js/compiled"
+                            :asset-path       "/js/compiled"
+                            :modules          {:app {:init-fn game-maker.core/-main}}
+                            :dev              {:app {:init-fn game-maker.core/-main}}
 
-                            :devtools   {:http-root "resources/public"
-                                         :http-port 3000}}
+                            ;; NOTE: this is needed for bootstrap of eval to work. It misses goog var is used without this.
+                            :compiler-options {:optimizations  :simple
+                                               :output-wrapper false}
+
+                            :devtools         {:http-root "resources/public"
+                                               :http-port 3000}}
 
                 ;; see explanations at: https://code.thheller.com/blog/shadow-cljs/2017/10/14/bootstrap-support.html
                 :bootstrap {:target     :bootstrap

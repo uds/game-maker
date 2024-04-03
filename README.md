@@ -1,6 +1,5 @@
 # Game Maker
 
-## Description
 Game Maker is a project that explores the use of LLM model to generate code for a simple game using a specialized DSL API. 
 The project is written in ClojureScript and uses shadow-cljs for building. 
 It has no back-end (except for the calls to OpenAI API) and runs entirely in the browser. 
@@ -42,11 +41,11 @@ To start the Clojure REPL and connect to it using Calva, follow these steps:
 5. Search for "Calva: Jack-in" and select the appropriate option for your project setup.
 6. Calva will start the Clojure REPL and connect to it.
 
-### Run app ###
+### How to run it in DEV ###
 The shadow-cljs configuration includes a development HTTP server that listens at the 3000 port.
 
-Run the application by opening following URL:  
-`http://localhost:3000`  
+Once the Calva Jack-in sequence is dine, run the application by opening following URL:  
+http://localhost:3000
 
 ## Prompt examples
 

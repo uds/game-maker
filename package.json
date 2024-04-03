@@ -10,12 +10,12 @@
   "author": "uds",
   "license": "MIT",
   "scripts": {
-    "watch": "npx shadow-cljs watch app",
-    "release": "npx shadow-cljs release app",
-    "tailwindcss-watch": "npx tailwindcss -i resources/public/css/styles.css -o resources/public/css/compiled/styles.css --watch",
-    "tailwindcss-dev": "npx tailwindcss -i resources/public/css/styles.css -o resources/public/css/compiled/styles.css",
-    "tailwindcss-prod": "npx tailwindcss -i resources/public/css/styles.css -o resources/public/css/compiled/styles.css --minify",
-    "release-all": "npm run release && npm run tailwindcss-prod",
+    "watch": "npx shadow-cljs watch bootstrap app",
+    "release-app": "npx shadow-cljs release bootstrap app",
+    "tailwindcss-watch": "npx tailwindcss -i src/game_maker/styles.css -o resources/public/css/compiled/styles.css --watch",
+    "tailwindcss-dev": "npx tailwindcss -i src/game_maker/styles.css -o resources/public/css/compiled/styles.css",
+    "tailwindcss-prod": "npx tailwindcss -i src/game_maker/styles.css -o resources/public/css/compiled/styles.css --minify",
+    "release": "npm run release-app && npm run tailwindcss-prod",
     "build-report": "npx shadow-cljs run shadow.cljs.build-report app target/build-report.html"
   },
   "dependencies": {
