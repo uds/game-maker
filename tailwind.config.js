@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */ 
 
 module.exports = {
-  content: ['src/game_maker/view/**/*.cljs'],
+  content: ['src/game_maker/views/**/*.cljs'],
   plugins: [
     require('@tailwindcss/aspect-ratio'),
     require('@tailwindcss/forms')({

@@ -19,7 +19,9 @@
     "build-report": "npx shadow-cljs run shadow.cljs.build-report app target/build-report.html"
   },
   "dependencies": {
-    "openai": "4.31.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "openai": "4.32.0",
     "babylonjs": "7.0.0",
     "cannon": "0.6.2", 
     "@tailwindcss/aspect-ratio": "0.4.2",

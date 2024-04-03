@@ -1,6 +1,6 @@
 (ns game-maker.babylon
   (:require [babylonjs :as bb]
-            [cannon :as cannon]))
+            ["cannon" :as cannon]))
 
 
 ;; Stores references to the babylon engine and scene: {:engine ??, :scene ??, :resize-fn ??}

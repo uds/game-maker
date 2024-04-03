@@ -1,22 +1,23 @@
-{:dependencies [;; DEV dependencies
+{:dependencies [[reagent "1.2.0"]
+                ;; DEV dependencies
                 [binaryage/devtools "1.0.7"]]
 
  :source-paths ["src", "dev", "test"]
 
  :nrepl        {:port 8777}
 
- :builds       {:app  {:target     :browser
-                       :output-dir "resources/public/js/compiled"
-                       :asset-path "/js/compiled"
-                       :modules    {:app {:init-fn game-maker.core/-main}}
-                       :dev        {:modules {:app {:init-fn game-maker.core/-main}}}
+ :builds       {:app       {:target     :browser
+                            :output-dir "resources/public/js/compiled"
+                            :asset-path "/js/compiled"
+                            :modules    {:app {:init-fn game-maker.core/-main}}
+                            :dev        {:modules {:app {:init-fn game-maker.core/-main}}}
 
-                       :devtools   {:http-root "resources/public"
-                                    :http-port 3000}}
+                            :devtools   {:http-root "resources/public"
+                                         :http-port 3000}}
 
                 ;; see explanations at: https://code.thheller.com/blog/shadow-cljs/2017/10/14/bootstrap-support.html
-                :bootstrap  {:target     :bootstrap
-                             :output-dir "resources/public/js/bootstrap"
-                             :entries    [cljs.js game-maker.dsl]
-                             :exclude    #{cljs.js}
-                             :macros     []}}}
+                :bootstrap {:target     :bootstrap
+                            :output-dir "resources/public/js/bootstrap"
+                            :entries    [cljs.js game-maker.dsl]
+                            :exclude    #{cljs.js}
+                            :macros     []}}}
