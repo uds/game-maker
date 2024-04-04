@@ -27,8 +27,6 @@ One should run `npm run watch` or `npm run release` to rebuild everything.
 
 To ran TailwindCSS compiler in a watch mode while developing:  
 `npm run tailwindcss-watch`  
-or  
-`npx tailwindcss -i src/app/phs/front/styles.css -o resources/public/css/compiled/front-styles.css --watch`
 
 ### Calva Jack-in
 To start the Clojure REPL and connect to it using Calva, follow these steps:
