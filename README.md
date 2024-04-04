@@ -11,9 +11,8 @@ Try out the live demo at https://uds.github.io/game-maker/
 To set up the project, follow the steps below:
 
 1. Clone the repository to your local machine.
-2. Install Node.js if you haven't already.
-3. Open a terminal and navigate to the project directory.
-4. Run the following command to install the project dependencies:
+2. Open a terminal and navigate to the project directory.
+3. Run the following command to install the project dependencies:
    ``` 
    npm install
    ```
